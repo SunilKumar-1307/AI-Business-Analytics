@@ -1,40 +1,65 @@
-### AI Business Analytics
+# AI Business Analytics
 
-AI-powered business analytics and natural language data querying for Frappe
+A Frappe Framework application that allows users to ask business questions in natural language and retrieve information from a five-year synthetic business dataset.
 
-### Installation
+## 1. Project Overview
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+This project implements an AI-assisted business analytics interface using Frappe Framework.
 
-```bash
-cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch version-16
-bench install-app ai_business_analytics
-```
+Users can enter natural-language questions such as:
 
-### Contributing
+- What were the sales for each year?
+- Show me sales by city for 2025.
+- What is the production status distribution?
+- Show revenue by product category for 2025.
+- Show customers who recently purchased.
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
+The system interprets the question, maps it to an allowlisted analytics operation, executes a controlled backend query, and displays the result in the Frappe UI.
 
-```bash
-cd apps/ai_business_analytics
-pre-commit install
-```
+Unsupported questions are rejected instead of generating unsupported business results.
 
-Pre-commit is configured to use the following tools for checking and formatting your code:
+## 2. Technology Stack
 
-- ruff
-- eslint
-- prettier
-- pyupgrade
-### CI
+- Frappe Framework
+- Python
+- MariaDB
+- JavaScript
+- Ollama
+- Qwen 2.5 local LLM
+- Docker / Frappe Dev Container
+- Git / GitHub
 
-This app can use GitHub Actions for CI. The following workflows are configured:
+The LLM is hosted locally through Ollama, so no paid external AI API is required.
 
-- CI: Installs this app and runs unit tests on every push to `develop` branch.
-- Linters: Runs [Frappe Semgrep Rules](https://github.com/frappe/semgrep-rules) and [pip-audit](https://pypi.org/project/pip-audit/) on every pull request.
+## 3. Architecture
 
-
-### License
-
-mit
+```text
+User
+  |
+  v
+Frappe AI Business Analytics Page
+  |
+  v
+Natural Language Question
+  |
+  v
+Fast Deterministic Classifier
+  |
+  +---- Supported obvious query ----> Allowlisted Analytics Function
+  |
+  +---- Complex/indirect query ------> Ollama LLM
+                                      |
+                                      v
+                              Structured Query Plan
+                                      |
+                                      v
+                              Allowlisted Operation
+  |
+  v
+MariaDB
+  |
+  v
+Analytics Result
+  |
+  v
+Frappe UI

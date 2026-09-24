@@ -129,6 +129,30 @@ def fast_classify(question):
         " ",
         text,
     )
+    
+        # --------------------------------------------------------
+    # UNSUPPORTED PREDICTION QUESTIONS
+    # --------------------------------------------------------
+
+    prediction_words = [
+        "most likely",
+        "likely to",
+        "will become",
+        "will be",
+        "predict",
+        "prediction",
+        "forecast",
+        "next year",
+        "future",
+    ]
+
+    if any(phrase in text for phrase in prediction_words):
+        return {
+            "query_type": "unsupported",
+            "start_date": None,
+            "end_date": None,
+            "days": None,
+        }
 
     year = extract_year(text)
 
